@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CharterCopilot — AI quoting for charter operators</title>
+<meta name="description" content="AI-powered quoting and workflow platform for private charter operators. See both sides of the experience." />
+
+<style>
+:root {
+  --bg: #F7F7F5;
+  --surface: #FFFFFF;
+  --surface-2: #EFEFEC;
+  --surface-3: #E4E4DF;
+  --text: #111111;
+  --text-2: #555555;
+  --text-3: #8A8A87;
+  --border: rgba(17, 17, 17, 0.08);
+  --border-2: rgba(17, 17, 17, 0.16);
+  --accent: #0F62FE;
+  --accent-bg: rgba(15, 98, 254, 0.08);
+  --accent-text: #0043CE;
+  --success: #198038;
+  --success-bg: rgba(25, 128, 56, 0.1);
+  --success-text: #0E6027;
+  --warning: #B28600;
+  --warning-bg: rgba(178, 134, 0, 0.1);
+  --warning-text: #856600;
+  --info: #0F62FE;
+  --info-bg: rgba(15, 98, 254, 0.08);
+  --info-text: #0043CE;
+  --danger: #DA1E28;
+  --danger-bg: rgba(218, 30, 40, 0.08);
+  --danger-text: #A2191F;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Roboto Mono', Menlo, Consolas, monospace;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  --bg: #0B0B0C;
+  --surface: #161618;
+  --surface-2: #1F1F22;
+  --surface-3: #2A2A2E;
+  --text: #F4F4F4;
+  --text-2: #A0A0A4;
+  --text-3: #6E6E72;
+  --border: rgba(244, 244, 244, 0.08);
+  --border-2: rgba(244, 244, 244, 0.16);
+  --accent: #4589FF;
+  --accent-bg: rgba(69, 137, 255, 0.12);
+  --accent-text: #78A9FF;
+  --success: #42BE65;
+  --success-bg: rgba(66, 190, 101, 0.12);
+  --success-text: #6FDC8C;
+  --warning: #F1C21B;
+  --warning-bg: rgba(241, 194, 27, 0.13);
+  --warning-text: #F7D77E;
+  --info: #4589FF;
+  --info-bg: rgba(69, 137, 255, 0.12);
+  --info-text: #78A9FF;
+  --danger: #FA4D56;
+  --danger-bg: rgba(250, 77, 86, 0.12);
+  --danger-text: #FF8389;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px -8px rgba(0, 0, 0, 0.7);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body { min-height: 100vh; transition: background 0.2s, color 0.2s; }
+
+button { font-family: inherit; cursor: pointer; }
+input, textarea, select { font-family: inherit; }
+
+/* Inline SVG icon defaults */
+.icon { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+.icon-lg { width: 22px; height: 22px; stroke-width: 1.6; }
+.icon-xl { width: 28px; height: 28px; stroke-width: 1.5; }
+.icon-sm { width: 13px; height: 13px; }
+
+/* ============== TOP BAR ============== */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.brand-mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--text); color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-mark svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.brand-name { font-weight: 600; font-size: 15px; letter-spacing: -0.015em; }
+.brand-name span { color: var(--text-3); font-weight: 400; }
+
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: transparent; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2);
+  transition: all 0.15s;
+}
+.theme-toggle:hover { background: var(--surface-2); color: var(--text); border-color: var(--border-2); }
+.theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+
+.persp-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 100px;
+  font-size: 12px; font-weight: 500;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.persp-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.persp-pill.customer .dot { background: var(--info); }
+.persp-pill.operator .dot { background: var(--warning); }
+
+/* ============== LAYOUT ============== */
+.page { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+.screen { display: none; padding: 32px 0 64px; }
+.screen.active { display: block; animation: fade 0.3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ============== LAUNCHER ============== */
+.hero {
+  padding: 72px 0 32px;
+  max-width: 720px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px; border-radius: 4px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  font-size: 11px; color: var(--text-2);
+  margin-bottom: 28px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+.hero h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(36px, 5.6vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.028em;
+  font-weight: 400;
+  margin-bottom: 20px;
+  color: var(--text-2);
+}
+.hero h1 .hero-emphasis {
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.032em;
+}
+.hero p {
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-2);
+  max-width: 560px;
+}
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 56px;
+}
+.persona-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  text-align: left;
+  position: relative;
+}
+.persona-card:hover {
+  border-color: var(--text);
+}
+.persona-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+}
+.persona-icon.customer { background: var(--info-bg); color: var(--info-text); }
+.persona-icon.operator { background: var(--warning-bg); color: var(--warning-text); }
+.persona-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+.persona-title {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  margin-bottom: 6px;
+}
+.persona-sub { color: var(--text-2); font-size: 14px; line-height: 1.5; margin-bottom: 18px; }
+
+.persona-steps { display: flex; flex-direction: column; gap: 7px; margin-bottom: 22px; }
+.persona-step {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--text-2);
+}
+.persona-step .num {
+  width: 20px; height: 20px; border-radius: 3px;
+  background: var(--surface-2); color: var(--text-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.persona-cta {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 13px; font-weight: 500;
+  color: var(--text-2);
+}
+.persona-cta .arrow {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2);
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+.persona-card:hover .arrow { transform: translateX(3px); color: var(--text); }
+.persona-card:hover .persona-cta { color: var(--text); }
+.persona-cta .arrow svg { stroke-width: 1.85; width: 16px; height: 16px; }
+
+.launcher-note {
+  text-align: left;
+  margin-top: 40px;
+  padding-top: 22px;
+  font-size: 13px;
+  color: var(--text-3);
+  border-top: 1px solid var(--border);
+}
+
+/* ============== BUTTONS ============== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px 14px;
+  font-size: 13px; font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  letter-spacing: -0.005em;
+}
+.btn:hover { background: var(--surface-2); }
+.btn-primary {
+  background: var(--text); color: var(--bg); border-color: var(--text);
+}
+.btn-primary:hover { opacity: 0.88; background: var(--text); }
+.btn-success {
+  background: var(--success); color: white; border-color: var(--success);
+}
+.btn-success:hover { opacity: 0.92; }
+.btn-sm { padding: 6px 11px; font-size: 12px; }
+.btn-ghost { border-color: transparent; }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn svg { width: 14px; height: 14px; stroke-width: 1.85; }
+
+/* ============== FLOW HEADER ============== */
+.flow-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  gap: 16px; flex-wrap: wrap;
+}
+.flow-crumbs { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-3); flex-wrap: wrap; }
+.flow-crumbs .crumb { display: flex; align-items: center; gap: 6px; }
+.flow-crumbs .crumb.active { color: var(--text); font-weight: 500; }
+.flow-crumbs .crumb svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.85; stroke-linecap: round; stroke-linejoin: round; }
+.flow-crumbs .sep { color: var(--text-3); opacity: 0.4; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: none;
+  font-size: 13px; color: var(--text-2);
+  padding: 6px 0; margin-bottom: 14px;
+}
+.back-btn:hover { color: var(--text); }
+.back-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.85; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ============== CARDS ============== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.card-padded { padding: 20px; }
+.section-head { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600; margin-bottom: 12px; }
+
+/* ============== STATUS ============== */
+.status {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 500;
+  padding: 3px 10px; border-radius: 100px;
+  letter-spacing: -0.005em;
+}
+.s-new { background: var(--info-bg); color: var(--info-text); }
+.s-quoted { background: var(--warning-bg); color: var(--warning-text); }
+.s-accepted { background: var(--success-bg); color: var(--success-text); }
+.s-draft { background: var(--surface-2); color: var(--text-2); }
+.s-lost { background: var(--surface-2); color: var(--text-3); }
+.s-sent { background: var(--info-bg); color: var(--info-text); }
+
+/* ============== INPUTS ============== */
+.input, .textarea, .select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  transition: border-color 0.15s, background 0.15s;
+  font-family: var(--font-sans);
+}
+.input:focus, .textarea:focus, .select:focus {
+  outline: none;
+  border-color: var(--text);
+  background: var(--surface);
+}
+.textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+.label { font-size: 11px; color: var(--text-3); display: block; margin-bottom: 5px; font-weight: 500; letter-spacing: 0.01em; }
+
+/* ============== PHONE FRAME ============== */
+.phone-wrap { display: flex; justify-content: center; padding: 8px 0; }
+.phone {
+  width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 28px;
+  padding: 22px;
+  box-shadow: var(--shadow-lg);
+}
+.phone-brand { text-align: center; margin-bottom: 20px; }
+.phone-logo {
+  width: 42px; height: 42px; border-radius: 8px;
+  background: var(--accent); margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 600; font-size: 16px;
+  font-family: var(--font-sans);
+}
+.phone-brand p { margin: 0; }
+.phone-brand .name { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; }
+.phone-brand .sub { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+
+/* ============== OPERATOR LAYOUT ============== */
+.op-layout { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 20px; }
+.op-sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 10px;
+}
+.op-sidebar-brand {
+  padding: 6px 12px 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.op-sidebar-brand .name { font-size: 13px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.op-sidebar-brand .sub { font-size: 11px; color: var(--text-3); margin: 2px 0 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  font-size: 13px; color: var(--text-2);
+  border-radius: var(--radius-md);
+  border: none; background: transparent; width: 100%;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+.nav-item.active { background: var(--text); color: var(--bg); font-weight: 500; }
+.nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.85; stroke-linecap: round; stroke-linejoin: round; }
+.nav-item .badge {
+  margin-left: auto;
+  background: var(--danger-bg); color: var(--danger-text);
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 100px;
+}
+.nav-item.active .badge { background: rgba(255,255,255,0.18); color: var(--bg); }
+
+/* ============== TABLE ROWS ============== */
+.row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 12px;
+}
+.row:first-child { border-top: none; }
+.row:hover { background: var(--surface-2); }
+.row.highlight {
+  background: var(--info-bg);
+  border-left: 3px solid var(--info);
+}
+
+/* ============== TIMELINE ============== */
+.timeline-step { display: flex; gap: 14px; padding: 12px 0; }
+.timeline-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--text-3);
+}
+.timeline-dot svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.timeline-dot.done { background: var(--success-bg); color: var(--success-text); }
+.timeline-dot.active { background: var(--info-bg); color: var(--info-text); }
+.timeline-dot.active .pulse {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--info);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+.timeline-line { width: 1px; background: var(--border); margin-left: 13.5px; height: 12px; }
+
+/* ============== ACCENT BANNERS ============== */
+.ai-banner {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--info-bg);
+  border: 1px solid color-mix(in srgb, var(--info) 30%, transparent);
+  border-left-width: 3px;
+  border-radius: var(--radius-md);
+  margin-top: 18px;
+}
+.ai-banner svg { width: 18px; height: 18px; stroke: var(--info-text); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; margin-top: 2px; flex-shrink: 0; }
+.ai-banner .body { flex: 1; }
+.ai-banner .body p { margin: 0; font-size: 13px; color: var(--info-text); }
+.ai-banner .body p.title { font-weight: 600; margin-bottom: 3px; }
+
+.success-banner {
+  display: flex; gap: 14px; align-items: center;
+  padding: 18px 22px;
+  background: var(--success-bg);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+.success-banner svg { width: 30px; height: 30px; stroke: var(--success-text); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.success-banner .title { font-size: 15px; font-weight: 600; color: var(--success-text); margin: 0; letter-spacing: -0.005em; }
+.success-banner .sub { font-size: 12px; color: var(--success-text); opacity: 0.85; margin: 3px 0 0; }
+
+/* ============== PROPOSAL ============== */
+.proposal-wrap { max-width: 580px; margin: 0 auto; }
+.proposal-header {
+  padding: 22px 26px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.proposal-body { padding: 26px; }
+.proposal-aircraft {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin: 20px 0;
+}
+.proposal-aircraft .top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.proposal-aircraft .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px; }
+.proposal-aircraft .stat-label { color: var(--text-2); margin: 0 0 3px; }
+.proposal-aircraft .stat-value { font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+
+.price-display {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding-bottom: 14px; border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+.price-display .num {
+  font-family: var(--font-mono);
+  font-size: 36px; font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.price-display .note { font-size: 11px; color: var(--text-2); margin: 0; }
+
+.included { display: flex; flex-direction: column; gap: 8px; }
+.included-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); }
+.included-item svg { width: 14px; height: 14px; stroke: var(--success); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+/* ============== QUOTE BUILDER ============== */
+.qb-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 20px; }
+.qb-customer-card { padding: 16px; }
+.qb-customer-avatar { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+.qb-customer-avatar .av {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--info-bg); color: var(--info-text);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 12px;
+  letter-spacing: -0.01em;
+}
+.qb-customer-detail { font-size: 12px; line-height: 1.7; padding-top: 12px; border-top: 1px solid var(--border); }
+.qb-customer-detail .key { color: var(--text-2); margin-top: 8px; font-size: 11px; }
+.qb-customer-detail .val { font-weight: 500; margin-bottom: 6px; }
+.qb-customer-detail .val.italic { font-style: italic; font-weight: 400; color: var(--text-2); }
+
+.qb-builder { padding: 18px; }
+.line-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 12px; }
+.line-item .sub { color: var(--text-3); font-size: 11px; font-family: var(--font-mono); }
+.line-item .amt { font-family: var(--font-mono); font-size: 12px; }
+.line-item.divider { border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px; color: var(--text-2); }
+.line-item.total-line {
+  background: var(--surface-2);
+  margin: 14px -18px -18px;
+  padding: 16px 18px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  font-size: 14px;
+}
+.line-item.total-line .amt {
+  font-family: var(--font-mono);
+  font-size: 20px; font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+/* ============== UTILITIES ============== */
+.flex { display: flex; }
+.between { justify-content: space-between; }
+.center { align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mono { font-family: var(--font-mono); }
+
+.page-title {
+  font-family: var(--font-sans);
+  font-size: 22px; font-weight: 600;
+  letter-spacing: -0.022em;
+  margin: 0;
+}
+.page-sub { font-size: 13px; color: var(--text-2); margin: 4px 0 0; }
+.page-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; gap: 16px; flex-wrap: wrap; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 880px) {
+  .persona-grid { grid-template-columns: 1fr; }
+  .op-layout, .qb-layout { grid-template-columns: 1fr; }
+  .op-sidebar { display: none; }
+  .topbar { padding: 12px 18px; }
+  .page { padding: 0 18px; }
+  .phone { width: 100%; max-width: 380px; }
+  .hero { padding: 48px 0 28px; }
+}
+
+/* ============== FOOTER ============== */
+.demo-footer {
+  margin-top: 60px;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.demo-footer p { margin: 4px 0; }
+.demo-footer a { color: var(--accent); text-decoration: none; }
+.demo-footer strong { font-family: var(--font-mono); font-weight: 600; font-size: 12px; letter-spacing: 0; }
+</style>
+</head>
+<body>
+
+<!-- ============== SVG ICON DEFINITIONS ============== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path d="M16 10h4a2 2 0 010 4h-4l-4 7h-3l2-7H6l-2 2H1l2-4-2-4h3l2 2h5l-2-7h3l4 7z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14v-3a8 8 0 0116 0v3"/><path d="M18 19v-5a2 2 0 012-2h1v5a2 2 0 01-2 2zM5 19v-5a2 2 0 00-2-2H2v5a2 2 0 002 2z"/><path d="M11 21h2a2 2 0 002-2v-1"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></symbol>
+    <symbol id="i-circle-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-file-invoice" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6M9 14h6M9 18h4"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6l3.5-7z"/></symbol>
+    <symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M3 21a6 6 0 0112 0"/><circle cx="17" cy="7" r="3"/><path d="M22 19a4 4 0 00-6-3.4"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M3 21a6 6 0 0112 0"/><path d="M19 8v6M16 11h6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.6 1.6 0 00-1.8-.3 1.6 1.6 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.6 1.6 0 00-1-1.5 1.6 1.6 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.6 1.6 0 00.3-1.8 1.6 1.6 0 00-1.5-1H3a2 2 0 110-4h.1a1.6 1.6 0 001.5-1 1.6 1.6 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.6 1.6 0 001.8.3h.1a1.6 1.6 0 001-1.5V3a2 2 0 114 0v.1a1.6 1.6 0 001 1.5 1.6 1.6 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.6 1.6 0 00-.3 1.8v.1a1.6 1.6 0 001.5 1H21a2 2 0 110 4h-.1a1.6 1.6 0 00-1.5 1z"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 4.5L18 9l-4.1 1.5L12 15l-1.9-4.5L6 9l4.1-1.5z"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9zM5 14l.6 1.4L7 16l-1.4.6L5 18l-.6-1.4L3 16l1.4-.6z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8l-2 6-6 2 2-6z"/></symbol>
+  </defs>
+</svg>
+
+<!-- =============== TOP BAR =============== -->
+<header class="topbar">
+  <div class="brand" onclick="goTo('launcher')">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><use href="#i-plane"/></svg>
+    </div>
+    <div class="brand-name">CharterCopilot <span>· demo</span></div>
+  </div>
+  <div class="topbar-actions">
+    <div id="persp-pill" class="persp-pill" style="display: none;">
+      <span class="dot"></span><span id="persp-label">Customer view</span>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <svg class="icon icon-sun" viewBox="0 0 24 24"><use href="#i-sun"/></svg>
+      <svg class="icon icon-moon" viewBox="0 0 24 24"><use href="#i-moon"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- =============== LAUNCHER =============== -->
+<section class="screen active" id="screen-launcher">
+  <div class="hero">
+    <div class="hero-eyebrow"><span class="dot"></span>Interactive demo</div>
+    <h1>The Charter Quote,<br/><span class="hero-emphasis">Reimagined with AI.</span></h1>
+    <p>Walk through the experience from both sides — the customer requesting the flight, and the operator pricing and sending it.</p>
+  </div>
+
+  <div class="persona-grid">
+    <div class="persona-card" onclick="goTo('customer-request')">
+      <div class="persona-icon customer"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg></div>
+      <div class="persona-title">Customer</div>
+      <div class="persona-sub">Jennifer needs a jet to Aspen for her family ski trip on December 18.</div>
+      <div class="persona-steps">
+        <div class="persona-step"><span class="num">1</span>Request a flight</div>
+        <div class="persona-step"><span class="num">2</span>Receive proposal</div>
+        <div class="persona-step"><span class="num">3</span>Review &amp; accept</div>
+      </div>
+      <div class="persona-cta">
+        <span>Start customer flow</span>
+        <span class="arrow"><svg class="icon" viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></span>
+      </div>
+    </div>
+
+    <div class="persona-card" onclick="goTo('operator-inbox')">
+      <div class="persona-icon operator"><svg viewBox="0 0 24 24"><use href="#i-headset"/></svg></div>
+      <div class="persona-title">Operator</div>
+      <div class="persona-sub">Marcus runs Bayou Air Charter. A new request just landed in his inbox.</div>
+      <div class="persona-steps">
+        <div class="persona-step"><span class="num">1</span>See incoming lead</div>
+        <div class="persona-step"><span class="num">2</span>Build &amp; price quote</div>
+        <div class="persona-step"><span class="num">3</span>Send proposal</div>
+      </div>
+      <div class="persona-cta">
+        <span>Start operator flow</span>
+        <span class="arrow"><svg class="icon" viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="launcher-note">
+    <span class="mono">→</span> Same trip, both sides. Switch perspectives at any point in the flow.
+  </div>
+</section>
+
+<!-- =============== CUSTOMER 1: REQUEST =============== -->
+<section class="screen" id="screen-customer-request">
+  <button class="back-btn" onclick="goTo('launcher')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back to demo</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--info)"><use href="#i-user"/></svg> Customer</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Request flight</span>
+      <span class="sep">›</span>
+      <span class="crumb">Receive proposal</span>
+      <span class="sep">›</span>
+      <span class="crumb">Accept</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('operator-inbox')">Switch to operator <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-brand">
+        <div class="phone-logo">B</div>
+        <p class="name">Bayou Air Charter</p>
+        <p class="sub">Request a private charter</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div><label class="label">From</label><input class="input" type="text" value="Houston (KHOU)" /></div>
+        <div><label class="label">To</label><input class="input" type="text" value="Aspen (KASE)" /></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div><label class="label">Date</label><input class="input" type="text" value="Dec 18, 2026" /></div>
+          <div><label class="label">Passengers</label><input class="input" type="text" value="6" /></div>
+        </div>
+        <div>
+          <label class="label">Trip type</label>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn" style="flex: 1;">One-way</button>
+            <button class="btn btn-primary" style="flex: 1;">Round-trip</button>
+          </div>
+        </div>
+        <div>
+          <label class="label">Name &amp; contact</label>
+          <input class="input" type="text" value="Jennifer Park" style="margin-bottom: 6px;" />
+          <input class="input" type="text" value="jennifer.park@email.com" />
+        </div>
+        <div>
+          <label class="label">Anything we should know?</label>
+          <textarea class="textarea">Family ski trip. Would love a light jet, prefer morning departure.</textarea>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 6px;" onclick="goTo('customer-waiting')">Request proposal</button>
+        <p style="margin: 4px 0 0; font-size: 11px; color: var(--text-3); text-align: center;">No payment required. You'll hear back within 2 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CUSTOMER 2: WAITING =============== -->
+<section class="screen" id="screen-customer-waiting">
+  <button class="back-btn" onclick="goTo('customer-request')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--info)"><use href="#i-user"/></svg> Customer</span>
+      <span class="sep">›</span>
+      <span class="crumb">Request flight</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Receive proposal</span>
+      <span class="sep">›</span>
+      <span class="crumb">Accept</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('operator-inbox')">See operator side <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div style="text-align: center; padding: 24px 0 16px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--success-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; color: var(--success-text);">
+          <svg class="icon-xl" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#i-check"/></svg>
+        </div>
+        <p style="font-size: 16px; font-weight: 600; letter-spacing: -0.01em;">Request received</p>
+        <p style="margin: 6px 0 0; font-size: 13px; color: var(--text-2);">We're preparing your proposal. We'll email you shortly.</p>
+      </div>
+
+      <div style="background: var(--surface-2); border-radius: var(--radius-md); padding: 14px; margin-bottom: 18px;">
+        <p class="section-head" style="margin: 0 0 10px;">Your request</p>
+        <div style="font-size: 13px; line-height: 1.9;">
+          <div class="flex between"><span style="color: var(--text-2);">Route</span><span>KHOU → KASE</span></div>
+          <div class="flex between"><span style="color: var(--text-2);">Date</span><span>Dec 18, 2026</span></div>
+          <div class="flex between"><span style="color: var(--text-2);">Passengers</span><span>6</span></div>
+          <div class="flex between"><span style="color: var(--text-2);">Trip type</span><span>Round-trip</span></div>
+        </div>
+      </div>
+
+      <div>
+        <p class="section-head">What happens next</p>
+        <div class="timeline-step">
+          <div class="timeline-dot done"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
+          <div>
+            <p style="font-size: 13px; font-weight: 500;">Request submitted</p>
+            <p style="margin: 2px 0 0; font-size: 11px; color: var(--text-2);">Just now</p>
+          </div>
+        </div>
+        <div class="timeline-line"></div>
+        <div class="timeline-step">
+          <div class="timeline-dot active"><span class="pulse"></span></div>
+          <div>
+            <p style="font-size: 13px; font-weight: 500;">Operator preparing quote</p>
+            <p style="margin: 2px 0 0; font-size: 11px; color: var(--text-2);">Usually within 2 hours</p>
+          </div>
+        </div>
+        <div class="timeline-line"></div>
+        <div class="timeline-step">
+          <div class="timeline-dot"><svg viewBox="0 0 24 24"><use href="#i-mail"/></svg></div>
+          <div>
+            <p style="font-size: 13px; color: var(--text-2);">Proposal sent to your email</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" style="width: 100%; margin-top: 14px;" onclick="goTo('customer-proposal')">⏩ Skip ahead to proposal received</button>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CUSTOMER 3: PROPOSAL =============== -->
+<section class="screen" id="screen-customer-proposal">
+  <button class="back-btn" onclick="goTo('customer-waiting')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--info)"><use href="#i-user"/></svg> Customer</span>
+      <span class="sep">›</span>
+      <span class="crumb">Request flight</span>
+      <span class="sep">›</span>
+      <span class="crumb">Receive proposal</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Review &amp; accept</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('operator-quote-sent')">See operator side <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div class="proposal-wrap">
+    <div class="card">
+      <div class="proposal-header">
+        <div class="flex center gap-12">
+          <div style="width: 38px; height: 38px; border-radius: 6px; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-family: var(--font-sans); font-size: 15px;">B</div>
+          <div>
+            <p style="font-size: 14px; font-weight: 600; letter-spacing: -0.01em;">Bayou Air Charter</p>
+            <p style="margin: 2px 0 0; font-size: 11px; color: var(--text-2);">Quote #Q-0184 · Valid 72 hrs</p>
+          </div>
+        </div>
+        <span class="status s-sent">Proposal</span>
+      </div>
+
+      <div class="proposal-body">
+        <p style="font-size: 13px; color: var(--text-2); margin-bottom: 4px;">Hi Jennifer,</p>
+        <p style="font-size: 15px; line-height: 1.6;">Here's your proposal for the Houston-Aspen trip on December 18.</p>
+
+        <div class="proposal-aircraft">
+          <div class="top">
+            <div>
+              <p class="section-head" style="margin: 0 0 4px;">Recommended aircraft</p>
+              <p style="font-size: 17px; font-weight: 600; margin: 0; letter-spacing: -0.01em;">Citation CJ3</p>
+              <p style="margin: 2px 0 0; font-size: 13px; color: var(--text-2);">Light jet · 7 seats · Aspen-certified</p>
+            </div>
+            <svg style="width:36px;height:36px;stroke:var(--accent);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><use href="#i-plane"/></svg>
+          </div>
+          <div class="stats">
+            <div><p class="stat-label">Flight time</p><p class="stat-value">4h 12m</p></div>
+            <div><p class="stat-label">Departure</p><p class="stat-value">9:00 AM</p></div>
+            <div><p class="stat-label">Tail</p><p class="stat-value mono">N512MH</p></div>
+          </div>
+        </div>
+
+        <p class="section-head">All-in price</p>
+        <div class="price-display">
+          <p class="num">$25,234</p>
+          <p class="note">includes everything · no hidden fees</p>
+        </div>
+
+        <p class="section-head">What's included</p>
+        <div class="included">
+          <div class="included-item"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Flight time, fuel, repositioning</div>
+          <div class="included-item"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Crew, landing fees, overnight</div>
+          <div class="included-item"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Federal Excise Tax &amp; segment fees</div>
+          <div class="included-item"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg> Catering &amp; ground transport on request</div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 22px;">
+          <button class="btn" style="flex: 1;">Ask a question</button>
+          <button class="btn btn-success" style="flex: 2;" onclick="goTo('customer-accepted')">Accept proposal <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+        </div>
+        <p style="margin: 10px 0 0; font-size: 11px; color: var(--text-3); text-align: center;">50% deposit secures the aircraft. No charge until you accept.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CUSTOMER 4: ACCEPTED =============== -->
+<section class="screen" id="screen-customer-accepted">
+  <button class="back-btn" onclick="goTo('customer-proposal')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--info)"><use href="#i-user"/></svg> Customer</span>
+      <span class="sep">›</span>
+      <span class="crumb">Request</span>
+      <span class="sep">›</span>
+      <span class="crumb">Proposal</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Accepted ✓</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('operator-quote-accepted')">See operator side <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div class="phone-wrap">
+    <div class="phone">
+      <div style="text-align: center; padding: 28px 0 18px;">
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--success-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: var(--success-text);">
+          <svg style="width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><use href="#i-check"/></svg>
+        </div>
+        <p style="font-size: 18px; font-weight: 600; letter-spacing: -0.015em;">You're booked.</p>
+        <p style="margin: 6px 0 0; font-size: 13px; color: var(--text-2);">Marcus will reach out shortly with next steps.</p>
+      </div>
+
+      <div style="background: var(--surface-2); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+        <p class="section-head" style="margin: 0 0 10px;">Confirmed trip</p>
+        <div style="font-size: 13px; line-height: 2;">
+          <div class="flex between"><span style="color: var(--text-2);">Date</span><span style="font-weight: 500;">Dec 18, 9:00 AM</span></div>
+          <div class="flex between"><span style="color: var(--text-2);">Route</span><span style="font-weight: 500;">KHOU → KASE</span></div>
+          <div class="flex between"><span style="color: var(--text-2);">Aircraft</span><span style="font-weight: 500;">Citation CJ3 · N512MH</span></div>
+          <div class="flex between" style="padding-top: 8px; margin-top: 6px; border-top: 1px solid var(--border);"><span style="color: var(--text-2);">Total</span><span style="font-weight: 600;" class="mono">$25,234</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-primary">Sign contract</button>
+        <button class="btn">Pay 50% deposit ($12,617)</button>
+        <button class="btn btn-ghost" style="margin-top: 6px; font-size: 12px;" onclick="goTo('launcher')">Back to demo home</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== OPERATOR 1: INBOX =============== -->
+<section class="screen" id="screen-operator-inbox">
+  <button class="back-btn" onclick="goTo('launcher')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back to demo</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--warning)"><use href="#i-headset"/></svg> Operator</span>
+      <span class="sep">›</span>
+      <span class="crumb active">New lead arrives</span>
+      <span class="sep">›</span>
+      <span class="crumb">Build quote</span>
+      <span class="sep">›</span>
+      <span class="crumb">Send proposal</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('customer-request')">See customer side <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div class="op-layout">
+    <nav class="op-sidebar">
+      <div class="op-sidebar-brand">
+        <p class="name">Bayou Air</p>
+        <p class="sub">Marcus W.</p>
+      </div>
+      <button class="nav-item"><svg viewBox="0 0 24 24"><use href="#i-dashboard"/></svg>Dashboard</button>
+      <button class="nav-item active"><svg viewBox="0 0 24 24"><use href="#i-inbox"/></svg>Leads<span class="badge">3</span></button>
+      <button class="nav-item"><svg viewBox="0 0 24 24"><use href="#i-file-invoice"/></svg>Quotes</button>
+      <button class="nav-item"><svg viewBox="0 0 24 24"><use href="#i-plane"/></svg>Fleet</button>
+      <button class="nav-item"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg>Customers</button>
+      <button class="nav-item"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg>Settings</button>
+    </nav>
+
+    <main>
+      <div class="page-head">
+        <div>
+          <h2 class="page-title">Inbox</h2>
+          <p class="page-sub">3 new requests · 1 unread</p>
+        </div>
+        <span style="font-size: 12px; color: var(--info-text); display: flex; align-items: center; gap: 8px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--info);"></span>
+          Just now: Jennifer Park submitted a request
+        </span>
+      </div>
+
+      <div class="card">
+        <div class="row highlight" onclick="goTo('operator-lead-detail')">
+          <div>
+            <p style="font-weight: 600; letter-spacing: -0.005em;">Jennifer Park · KHOU → KASE</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-2);">6 pax · Dec 18 · Round-trip · "Family ski trip..."</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="status s-new">New · 1m ago</span>
+            <svg style="width:16px;height:16px;stroke:var(--info);fill:none;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <p style="font-weight: 600; letter-spacing: -0.005em;">Maria Velasquez · KHOU → KMIA</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-2);">8 pax · Jul 12 · Referral</p>
+          </div>
+          <span class="status s-new">New · 2h</span>
+        </div>
+        <div class="row">
+          <div>
+            <p style="font-weight: 600; letter-spacing: -0.005em;">Atlas Energy · KIAH → KDAL</p>
+            <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-2);">4 pax · Jun 3-4 · Repeat customer</p>
+          </div>
+          <span class="status s-quoted">Quoted · awaiting reply</span>
+        </div>
+      </div>
+
+      <div class="ai-banner">
+        <svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg>
+        <div class="body">
+          <p class="title">AI suggests: Jennifer's request matches your CJ3 sweet spot</p>
+          <p>Aspen-certified · seats her party · light jet pricing tier · 4hr leisure trip profile</p>
+        </div>
+        <button class="btn btn-sm" onclick="goTo('operator-lead-detail')">Build quote <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+      </div>
+    </main>
+  </div>
+</section>
+
+<!-- =============== OPERATOR 2: QUOTE BUILDER =============== -->
+<section class="screen" id="screen-operator-lead-detail">
+  <button class="back-btn" onclick="goTo('operator-inbox')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back to inbox</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--warning)"><use href="#i-headset"/></svg> Operator</span>
+      <span class="sep">›</span>
+      <span class="crumb">New lead</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Build quote</span>
+      <span class="sep">›</span>
+      <span class="crumb">Send proposal</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('customer-waiting')">See customer side <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div class="qb-layout">
+    <div>
+      <p class="section-head">From customer</p>
+      <div class="card qb-customer-card">
+        <div class="qb-customer-avatar">
+          <div class="av">JP</div>
+          <div>
+            <p style="font-size: 13px; font-weight: 600; letter-spacing: -0.005em;">Jennifer Park</p>
+            <p style="margin: 2px 0 0; font-size: 11px; color: var(--text-3);">New customer</p>
+          </div>
+        </div>
+        <div class="qb-customer-detail">
+          <div class="key">Route</div><div class="val">KHOU → KASE</div>
+          <div class="key">Date</div><div class="val">Dec 18, 9:00 AM</div>
+          <div class="key">Passengers</div><div class="val">6</div>
+          <div class="key">Notes</div><div class="val italic">"Family ski trip. Prefer light jet, morning departure."</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="flex between center mb-12">
+        <p class="section-head" style="margin: 0;">Quote builder</p>
+        <span style="font-size: 12px; color: var(--info-text); display: flex; align-items: center; gap: 5px;"><svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><use href="#i-sparkles"/></svg> AI pre-filled</span>
+      </div>
+
+      <div class="card qb-builder">
+        <div class="flex between center" style="padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 12px;">
+          <div>
+            <p style="font-size: 14px; font-weight: 600; letter-spacing: -0.005em;">Citation CJ3 · N512MH</p>
+            <p style="margin: 3px 0 0; font-size: 12px; color: var(--text-2);">Light jet · 4.2 hrs estimated · Aspen-certified</p>
+          </div>
+          <button class="btn btn-sm">Change <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+        </div>
+
+        <div class="line-item"><span>Flight hours <span class="sub">(4.2 × $3,800)</span></span><span class="amt">$15,960</span></div>
+        <div class="line-item"><span>Repositioning</span><span class="amt">$3,040</span></div>
+        <div class="line-item"><span>Crew, landing, overnight</span><span class="amt">$1,350</span></div>
+        <div class="line-item"><span>Segment fees (6 pax × 2)</span><span class="amt">$62</span></div>
+        <div class="line-item divider"><span>Subtotal</span><span class="amt">$20,412</span></div>
+        <div class="line-item"><span>FET (7.5%)</span><span class="amt">$1,531</span></div>
+        <div class="line-item"><span>Margin (15%)</span><span class="amt">$3,291</span></div>
+
+        <div class="line-item total-line">
+          <span style="color: var(--text-2);">Quote total</span>
+          <span class="amt">$25,234</span>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button class="btn" style="flex: 1;"><svg viewBox="0 0 24 24"><use href="#i-sparkles"/></svg> AI draft email</button>
+          <button class="btn btn-primary" style="flex: 1.5;" onclick="goTo('operator-quote-sent')">Send proposal <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== OPERATOR 3: QUOTE SENT =============== -->
+<section class="screen" id="screen-operator-quote-sent">
+  <button class="back-btn" onclick="goTo('operator-lead-detail')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--warning)"><use href="#i-headset"/></svg> Operator</span>
+      <span class="sep">›</span>
+      <span class="crumb">New lead</span>
+      <span class="sep">›</span>
+      <span class="crumb">Build quote</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Proposal sent</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('customer-proposal')">See what customer sees <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div style="max-width: 580px; margin: 0 auto;">
+    <div style="text-align: center; padding: 28px 0 24px;">
+      <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--success-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; color: var(--success-text);">
+        <svg style="width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><use href="#i-send"/></svg>
+      </div>
+      <p style="font-size: 18px; font-weight: 600; letter-spacing: -0.015em;">Proposal sent to Jennifer</p>
+      <p style="margin: 6px 0 0; font-size: 13px; color: var(--text-2);">Quote #Q-0184 · $25,234 · Valid 72 hours</p>
+    </div>
+
+    <p class="section-head">Activity</p>
+    <div class="card card-padded">
+      <div class="timeline-step">
+        <div class="timeline-dot done"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></div>
+        <div style="flex: 1;">
+          <p style="font-size: 14px; font-weight: 600; letter-spacing: -0.005em;">Quote built &amp; sent</p>
+          <p style="margin: 3px 0 0; font-size: 12px; color: var(--text-2);">2 min ago · 14 minutes after lead arrived</p>
+        </div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot active"><span class="pulse"></span></div>
+        <div style="flex: 1;">
+          <p style="font-size: 14px; font-weight: 600; letter-spacing: -0.005em;">Waiting for Jennifer to review</p>
+          <p style="margin: 3px 0 0; font-size: 12px; color: var(--text-2);">Avg. response time for new leisure leads: 4 hrs</p>
+        </div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot"><svg viewBox="0 0 24 24"><use href="#i-bell"/></svg></div>
+        <div style="flex: 1;">
+          <p style="font-size: 13px; color: var(--text-2);">You'll be notified when she opens or replies</p>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" style="width: 100%; margin-top: 16px;" onclick="goTo('operator-quote-accepted')">⏩ Skip ahead: Jennifer accepted the quote</button>
+  </div>
+</section>
+
+<!-- =============== OPERATOR 4: ACCEPTED =============== -->
+<section class="screen" id="screen-operator-quote-accepted">
+  <button class="back-btn" onclick="goTo('operator-quote-sent')"><svg viewBox="0 0 24 24"><use href="#i-arrow-left"/></svg> Back</button>
+
+  <div class="flow-header">
+    <div class="flow-crumbs">
+      <span class="crumb"><svg viewBox="0 0 24 24" style="color: var(--warning)"><use href="#i-headset"/></svg> Operator</span>
+      <span class="sep">›</span>
+      <span class="crumb">Build quote</span>
+      <span class="sep">›</span>
+      <span class="crumb">Proposal sent</span>
+      <span class="sep">›</span>
+      <span class="crumb active">Accepted ✓</span>
+    </div>
+    <button class="btn btn-sm" onclick="goTo('customer-accepted')">See customer side <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+  </div>
+
+  <div style="max-width: 580px; margin: 0 auto;">
+    <div class="success-banner">
+      <svg viewBox="0 0 24 24"><use href="#i-circle-check"/></svg>
+      <div>
+        <p class="title">Jennifer accepted the proposal</p>
+        <p class="sub">3 hrs after sending · $25,234 booked</p>
+      </div>
+    </div>
+
+    <p class="section-head">Trip summary</p>
+    <div class="card card-padded mb-16">
+      <div style="font-size: 13px; line-height: 2;">
+        <div class="flex between"><span style="color: var(--text-2);">Customer</span><span style="font-weight: 500;">Jennifer Park</span></div>
+        <div class="flex between"><span style="color: var(--text-2);">Route</span><span style="font-weight: 500;">KHOU → KASE</span></div>
+        <div class="flex between"><span style="color: var(--text-2);">Date</span><span style="font-weight: 500;">Dec 18, 9:00 AM</span></div>
+        <div class="flex between"><span style="color: var(--text-2);">Aircraft</span><span style="font-weight: 500;">Citation CJ3 · N512MH</span></div>
+        <div class="flex between" style="padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--border);"><span style="color: var(--text-2);">Total</span><span class="mono" style="font-weight: 600;">$25,234</span></div>
+      </div>
+    </div>
+
+    <p class="section-head">Next actions</p>
+    <div class="card">
+      <div class="row">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg style="width:20px;height:20px;stroke:var(--text-2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0" viewBox="0 0 24 24"><use href="#i-file-text"/></svg>
+          <div><p style="font-weight: 600; letter-spacing: -0.005em;">Send contract for e-signature</p><p style="margin: 3px 0 0; font-size: 12px; color: var(--text-2);">Auto-generated from accepted quote</p></div>
+        </div>
+        <button class="btn btn-sm">Send <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+      </div>
+      <div class="row">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg style="width:20px;height:20px;stroke:var(--text-2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0" viewBox="0 0 24 24"><use href="#i-calendar"/></svg>
+          <div><p style="font-weight: 600; letter-spacing: -0.005em;">Block N512MH on Dec 18</p><p style="margin: 3px 0 0; font-size: 12px; color: var(--text-2);">Updates fleet calendar</p></div>
+        </div>
+        <button class="btn btn-sm">Block <svg viewBox="0 0 24 24"><use href="#i-arrow-right"/></svg></button>
+      </div>
+      <div class="row">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg style="width:20px;height:20px;stroke:var(--text-2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0" viewBox="0 0 24 24"><use href="#i-user-plus"/></svg>
+          <div><p style="font-weight: 600; letter-spacing: -0.005em;">Save Jennifer as customer</p><p style="margin: 3px 0 0; font-size: 12px; color: var(--text-2);">First trip · added to CRM</p></div>
+        </div>
+        <span class="status s-accepted">Done</span>
+      </div>
+    </div>
+
+    <button class="btn" style="width: 100%; margin-top: 18px;" onclick="goTo('launcher')"><svg viewBox="0 0 24 24"><use href="#i-refresh"/></svg> Back to demo home</button>
+  </div>
+</section>
+
+<footer class="demo-footer">
+  <p><strong>CharterCopilot</strong> &nbsp;·&nbsp; AI quoting &amp; workflow for charter operators</p>
+  <p>Interactive demo &nbsp;·&nbsp; built by Menu Hunter</p>
+</footer>
+
+</div>
+
+<script>
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + screenId);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  const pill = document.getElementById('persp-pill');
+  const label = document.getElementById('persp-label');
+  if (screenId === 'launcher') {
+    pill.style.display = 'none';
+  } else if (screenId.startsWith('customer-')) {
+    pill.style.display = 'inline-flex';
+    pill.className = 'persp-pill customer';
+    label.textContent = 'Customer view';
+  } else if (screenId.startsWith('operator-')) {
+    pill.style.display = 'inline-flex';
+    pill.className = 'persp-pill operator';
+    label.textContent = 'Operator view';
+  }
+
+  history.replaceState(null, '', '#' + screenId);
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  try { localStorage.setItem('ccp-theme', next); } catch (e) {}
+}
+
+(function() {
+  try {
+    const saved = localStorage.getItem('ccp-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+
+  const hash = window.location.hash.slice(1);
+  if (hash && document.getElementById('screen-' + hash)) {
+    goTo(hash);
+  }
+})();
+</script>
+
+</body>
+</html>
